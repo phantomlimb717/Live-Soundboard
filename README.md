@@ -1,14 +1,16 @@
-# 🔊 OBS-Friendly Soundboard
+# 🔊 Live-Soundboard
+
+A straightforward soundboard for live streaming, gaming, and voice chat. Play sounds and easily route them to any application like OBS or Discord using a virtual audio cable.
 
 ## 📖 Background
 
-This project was created to provide a simple yet powerful tool for enriching live streams and online interactions. Whether for content creation, online gaming, or virtual meetings, this soundboard allows for seamless integration of audio clips to enhance the user's auditory presentation and provide real-time audio feedback or entertainment.
+This project started with a simple goal: to have the perfect sound effect ready for any moment in a multiplayer game with friends. It has since evolved into a more powerful tool for streamers and content creators, but at its heart, it's about adding a bit of fun and personality to your online interactions.
 
 ## ✨ Features
 
 *   **🎧 Flexible Audio Routing:** Directly output audio to any playback device, including virtual audio cables like VB-Cable, allowing for easy integration with streaming software like OBS or voice chat applications.
+*   **⌨️ System-Wide Hotkeys:** Trigger sounds from anywhere on your computer, even when the soundboard is minimized or you're in a full-screen game. (Requires `pynput`)
 *   **🎛️ Sound Customization:** Adjust the volume for each sound individually and apply audio effects like Reverb and Delay.
-*   **⌨️ Global Hotkeys:** Assign system-wide hotkeys to your sounds, so you can trigger them even when the application is not in focus. (Requires `pynput`)
 *   **📂 Sound Organization:** Group your sounds into tabs for better organization and quick access.
 *   **🔍 Quick Search:** Easily find the sound you're looking for with a built-in search bar that filters sounds in the current tab.
 *   **💅 Modern Interface:** A sleek, dark-themed interface that is easy to navigate.
@@ -24,8 +26,8 @@ This project was created to provide a simple yet powerful tool for enriching liv
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/OBS-Friendly-Soundboard.git
-    cd OBS-Friendly-Soundboard
+    git clone https://github.com/your-username/Live-Soundboard.git
+    cd Live-Soundboard
     ```
 
 2.  **Install the required dependencies:**
