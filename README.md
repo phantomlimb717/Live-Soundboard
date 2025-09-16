@@ -83,13 +83,13 @@ Now, any sound played from the soundboard will be routed through the virtual cab
 
 ### Using Your OBS Audio Mix as a Microphone
 
-This advanced guide explains how to send the final audio mix from OBS (including your microphone, game audio, and soundboard sounds) as a single microphone input to other applications like Discord, Zoom, or in-game voice chat.
+This advanced guide explains how to send the  audio mix from OBS (including your microphone and soundboard sounds) as a single microphone input to other applications like Discord, Zoom, or in-game voice chat.
 
 **Prerequisite:** This requires a second virtual audio cable. This guide assumes you have downloaded and installed the **VB-CABLE A+B** pack from VB-Audio.
 
 #### 1. OBS Setup
 
-1.  **Add All Audio Sources to OBS:** Make sure your primary microphone, your desktop audio, and the soundboard (as configured in the guide above) are all active audio sources in your OBS Audio Mixer.
+1.  **Add All Audio Sources to OBS:** Make sure your microphone and the soundboard (as configured in the guide above) are all active audio sources in your OBS Audio Mixer.
 
 2.  **Set Your Monitoring Device:**
     *   Go to `File > Settings > Audio`.
@@ -98,7 +98,7 @@ This advanced guide explains how to send the final audio mix from OBS (including
     *   Click `OK`.
 
 3.  **Enable Audio Monitoring for All Sources:**
-    *   In the `Audio Mixer` panel in OBS, click the gear icon for **every** audio source you want to include in your mix (your mic, the soundboard, desktop audio, etc.).
+    *   In the `Audio Mixer` panel in OBS, click the gear icon for **every** audio source you want to include in your mix (your mic, the soundboard, etc.).
     *   Select `Advanced Audio Properties`.
     *   For each source, change the `Audio Monitoring` dropdown from "Monitor Off" to **"Monitor and Output"**.
 
