@@ -17,12 +17,18 @@ This project started with a simple goal: to have the perfect sound effect ready 
 
 ## 🚀 Getting Started
 
-### 📋 Prerequisites
+### 1. Install a Virtual Audio Cable
 
-*   Python 3.x
-*   An installed virtual audio cable, such as [VB-CABLE Virtual Audio Device](https://vb-audio.com/Cable/).
+This soundboard requires a virtual audio cable to route audio to other applications. We recommend VB-CABLE, which is free.
 
-### 💻 Installation
+1.  **Download:** Go to the [VB-Audio Website](https://vb-audio.com/Cable/) and download the "VB-CABLE Driver Pack".
+2.  **Extract:** Unzip the downloaded file.
+3.  **Install:** Right-click on `VBCABLE_Setup_x64.exe` (or the 32-bit version if needed) and select **"Run as administrator"**.
+4.  **Reboot:** Restart your computer to complete the installation.
+
+### 2. Install Live-Soundboard
+
+Once you have a virtual audio cable installed, you can install the soundboard.
 
 1.  **Clone the repository:**
     ```bash
