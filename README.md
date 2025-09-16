@@ -110,7 +110,7 @@ This advanced guide explains how to send the  audio mix from OBS (including your
     *   Find the output of your second virtual cable, for example, **`CABLE-A Output (VB-Audio Cable A)`**.
     *   Right-click on it and select **"Set as Default Device"** and **"Set as Default Communication Device"**.
 
-Now, any application on your computer that uses your default microphone will receive the full audio mix from OBS.
+Now, any application on your computer that uses your default microphone will receive the full audio mix from OBS. Enjoy annoying your friends and teammates!
 
 ## 📝 License
 
