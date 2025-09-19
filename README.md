@@ -17,12 +17,18 @@ This project started with a simple goal: to have the perfect sound effect ready 
 
 ## 🚀 Getting Started
 
-### 📋 Prerequisites
+### 1. Install a Virtual Audio Cable
 
-*   Python 3.x
-*   An installed virtual audio cable, such as [VB-CABLE Virtual Audio Device](https://vb-audio.com/Cable/).
+This soundboard requires a virtual audio cable to route audio to other applications. We recommend VB-CABLE, which is free.
 
-### 💻 Installation
+1.  **Download:** Go to the [VB-Audio Website](https://vb-audio.com/Cable/) and download the "VB-CABLE Driver Pack".
+2.  **Extract:** Unzip the downloaded file.
+3.  **Install:** Right-click on `VBCABLE_Setup_x64.exe` (or the 32-bit version if needed) and select **"Run as administrator"**.
+4.  **Reboot:** Restart your computer to complete the installation.
+
+### 2. Install Live-Soundboard
+
+Once you have a virtual audio cable installed, you can install the soundboard.
 
 1.  **Clone the repository:**
     ```bash
@@ -72,6 +78,39 @@ Now, any sound played from the soundboard will be routed through the virtual cab
     *   **Relink Missing File:** If a sound file has been moved, you can relink it to its new location.
     *   **Delete Sound:** Remove the sound from the soundboard.
 *   **Manage Groups:** Go to `Edit > Manage Groups` to add, rename, or delete sound groups (tabs).
+
+## Advanced Usage
+
+### Using Your OBS Audio Mix as a Microphone
+
+This advanced guide explains how to send the  audio mix from OBS (including your microphone and soundboard sounds) as a single microphone input to other applications like Discord, Zoom, or in-game voice chat.
+
+**Prerequisite:** This requires a second virtual audio cable. This guide assumes you have downloaded and installed the **VB-CABLE A+B** pack from VB-Audio.
+
+#### 1. OBS Setup
+
+1.  **Add All Audio Sources to OBS:** Make sure your microphone and the soundboard (as configured in the guide above) are all active audio sources in your OBS Audio Mixer.
+
+2.  **Set Your Monitoring Device:**
+    *   Go to `File > Settings > Audio`.
+    *   Under the "Advanced" section, find the `Monitoring Device` dropdown.
+    *   Set this to your second virtual cable, for example, **`CABLE-A Input (VB-Audio Cable A)`**.
+    *   Click `OK`.
+
+3.  **Enable Audio Monitoring for All Sources:**
+    *   In the `Audio Mixer` panel in OBS, click the gear icon for **every** audio source you want to include in your mix (your mic, the soundboard, etc.).
+    *   Select `Advanced Audio Properties`.
+    *   For each source, change the `Audio Monitoring` dropdown from "Monitor Off" to **"Monitor and Output"**.
+
+#### 2. Windows Setup
+
+1.  **Set Your Default Microphone:**
+    *   Open your Windows Sound settings (right-click the speaker icon in your taskbar and select "Sounds").
+    *   Go to the `Recording` tab.
+    *   Find the output of your second virtual cable, for example, **`CABLE-A Output (VB-Audio Cable A)`**.
+    *   Right-click on it and select **"Set as Default Device"** and **"Set as Default Communication Device"**.
+
+Now, any application on your computer that uses your default microphone will receive the full audio mix from OBS. Enjoy annoying your friends and teammates!
 
 ## 📝 License
 
