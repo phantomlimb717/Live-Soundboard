@@ -1,0 +1,54 @@
+name: Build Soundboard Application
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --noconfirm --onefile --windowed --name "Soundboard" --add-data "config.json;." "soundboard.py"
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Soundboard-Windows
+        path: dist/Soundboard.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --noconfirm --windowed --name "Soundboard" --add-data "config.json:." "soundboard.py"
+    - name: Create App Bundle
+      run: |
+        hdiutil create ./Soundboard.dmg -srcfolder dist/Soundboard.app -ov
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Soundboard-macOS
+        path: Soundboard.dmg
