@@ -23,7 +23,7 @@ jobs:
       run: |
         pyinstaller --noconfirm --onefile --windowed --name "Soundboard" --add-data "config.json;." "soundboard.py"
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Soundboard-Windows
         path: dist/Soundboard.exe
@@ -48,7 +48,7 @@ jobs:
       run: |
         hdiutil create ./Soundboard.dmg -srcfolder dist/Soundboard.app -ov
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Soundboard-macOS
         path: Soundboard.dmg
