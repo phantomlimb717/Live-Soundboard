@@ -2,7 +2,7 @@
 
 A straightforward soundboard for live streaming, gaming, and voice chat. Play sounds and easily route them to any application like OBS or Discord using a virtual audio cable.
 
-https://i.imgur.com/hopqYDF.png
+![Soundboard Screenshot](https://i.imgur.com/hopqYDF.png)
 
 ## 📖 Background
 
