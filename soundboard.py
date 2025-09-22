@@ -737,7 +737,7 @@ class SoundboardWindow(QMainWindow):
         self._file_check_event = None; self._current_popup = None
         self._tk_root = None
         self.load_config()
-        self.setWindowTitle("PySide6 Soundboard (pynput)"); self.setGeometry(100, 100, 800, 600); self.setMinimumSize(600, 400)
+        self.setWindowTitle("Live Soundboard v1.0"); self.setGeometry(100, 100, 800, 600); self.setMinimumSize(600, 400)
         self._setup_ui()
         self.apply_dark_theme()
         self.file_check_timer = QTimer(self); self.file_check_timer.timeout.connect(self.check_files)
@@ -1959,3 +1959,4 @@ if __name__ == '__main__':
         sys.exit(1)
 
     sys.exit(app.exec())
+
