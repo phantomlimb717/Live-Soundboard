@@ -2,6 +2,8 @@
 
 A straightforward soundboard for live streaming, gaming, and voice chat. Play sounds and easily route them to any application like OBS or Discord using a virtual audio cable.
 
+https://i.imgur.com/hopqYDF.png
+
 ## 📖 Background
 
 This project started with a simple goal: to have the perfect sound effect ready for any moment in a multiplayer game with friends. It has since evolved into a more powerful tool for streamers and content creators, but at its heart, it's about adding a bit of fun and personality to your online interactions.
