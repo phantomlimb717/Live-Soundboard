@@ -940,10 +940,13 @@ class SoundboardWindow(QMainWindow):
             sound_id = sound.get("id", "unknown"); relative_path = sound.get("relative_path"); abs_path_resolved = None
             if relative_path:
                 try:
+                    # Normalize slashes from config to native OS slashes
+                    native_rel_path = os.path.normpath(relative_path)
+
                     # Try path relative to config first
-                    path_try1 = os.path.join(config_dir, relative_path)
+                    path_try1 = os.path.join(config_dir, native_rel_path)
                     # Try path as absolute if it is
-                    path_try2 = relative_path if os.path.isabs(relative_path) else None
+                    path_try2 = native_rel_path if os.path.isabs(native_rel_path) else None
 
                     if os.path.exists(path_try1):
                         abs_path_resolved = os.path.abspath(path_try1)
@@ -970,6 +973,10 @@ class SoundboardWindow(QMainWindow):
             for sound in config_copy["sounds"]:
                 sound.pop("absolute_path", None) # Don't save absolute path
                 sound.pop("file_exists", None)   # Don't save runtime file status
+
+                # Normalize relative path to forward slashes for cross-platform
+                if "relative_path" in sound and sound["relative_path"]:
+                    sound["relative_path"] = sound["relative_path"].replace('\\', '/')
         return config_copy
 
     # --- UI Population ---
@@ -1081,6 +1088,9 @@ class SoundboardWindow(QMainWindow):
                         try: relative_path = os.path.relpath(abs_path, config_dir)
                         except ValueError: relative_path = abs_path # Use absolute if on different drive (Windows)
 
+                        # Normalize path for cross-platform compatibility
+                        relative_path = relative_path.replace('\\', '/')
+
                         # Check for duplicates based on relative path
                         if any(s.get('relative_path') == relative_path for s in self.config.get('sounds', [])): print(f"Skipping duplicate: {relative_path}"); continue
 
@@ -1172,20 +1182,61 @@ class SoundboardWindow(QMainWindow):
                 abs_path = os.path.abspath(selected_file)
                 try: relative_path = os.path.relpath(abs_path, config_dir)
                 except ValueError: relative_path = abs_path # Use absolute if on different drive
+                # Normalize path for cross-platform compatibility
+                relative_path = relative_path.replace('\\', '/')
 
                 # Update the sound data in the main config list
                 sound_data["relative_path"] = relative_path;
                 sound_data["absolute_path"] = abs_path; # Update runtime path
                 sound_data["file_exists"] = True # Assume it exists since we just selected it
 
-                self.save_config(); # Save the updated relative path
-                self.update_status(f"Relinked '{name}'.")
-
                 # Update the corresponding button's appearance
                 button_widget = self.sound_buttons.get(sound_id)
                 if button_widget:
                     button_widget.sound_data = sound_data # Update button's internal data ref
                     button_widget.set_file_missing(False) # Update visual state
+
+                # BATCH RELINKING LOGIC
+                new_dir = os.path.dirname(abs_path)
+                batch_relinked_count = 0
+                for other_sound in self.config.get('sounds', []):
+                    if other_sound.get('id') == sound_id:
+                        continue # Skip the one we just relinked
+
+                    if not other_sound.get('file_exists', True): # It's missing
+                        old_other_path = other_sound.get('absolute_path') or other_sound.get('relative_path')
+                        if old_other_path:
+                            # Extract just the filename
+                            filename = os.path.basename(old_other_path)
+                            potential_new_path = os.path.join(new_dir, filename)
+
+                            if os.path.exists(potential_new_path):
+                                try: other_rel_path = os.path.relpath(potential_new_path, config_dir)
+                                except ValueError: other_rel_path = potential_new_path
+                                # Normalize path
+                                other_rel_path = other_rel_path.replace('\\', '/')
+
+                                other_sound["relative_path"] = other_rel_path
+                                other_sound["absolute_path"] = potential_new_path
+                                other_sound["file_exists"] = True
+
+                                # Update UI button
+                                other_button = self.sound_buttons.get(other_sound.get('id'))
+                                if other_button:
+                                    other_button.sound_data = other_sound
+                                    other_button.set_file_missing(False)
+
+                                batch_relinked_count += 1
+                                print(f"Auto-relinked: {other_sound.get('name')} to {potential_new_path}")
+
+                self.save_config(); # Save the updated relative path
+                if batch_relinked_count > 0:
+                    msg = f"Relinked '{name}' and auto-relinked {batch_relinked_count} other missing files in the same folder."
+                    self.update_status(msg)
+                    QMessageBox.information(self, "Batch Relink Successful", msg)
+                else:
+                    self.update_status(f"Relinked '{name}'.")
+
             else: # No file selected
                 self.update_status("Relink cancelled - no file selected.")
         else: # Dialog cancelled
@@ -1959,4 +2010,3 @@ if __name__ == '__main__':
         sys.exit(1)
 
     sys.exit(app.exec())
-
