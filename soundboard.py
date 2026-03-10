@@ -1179,13 +1179,18 @@ class SoundboardWindow(QMainWindow):
                 selected_file = selected_files[0]; print(f"New file selected: {selected_file}"); config_dir = get_script_directory()
                 if not config_dir: self.show_error_popup("Error", "Cannot determine application directory to calculate relative path."); return
 
+                was_missing = not sound_data.get("file_exists", True)
+
                 abs_path = os.path.abspath(selected_file)
                 try: relative_path = os.path.relpath(abs_path, config_dir)
                 except ValueError: relative_path = abs_path # Use absolute if on different drive
                 # Normalize path for cross-platform compatibility
                 relative_path = relative_path.replace('\\', '/')
 
+                new_sound_name = os.path.splitext(os.path.basename(abs_path))[0]
+
                 # Update the sound data in the main config list
+                sound_data["name"] = new_sound_name
                 sound_data["relative_path"] = relative_path;
                 sound_data["absolute_path"] = abs_path; # Update runtime path
                 sound_data["file_exists"] = True # Assume it exists since we just selected it
@@ -1194,48 +1199,50 @@ class SoundboardWindow(QMainWindow):
                 button_widget = self.sound_buttons.get(sound_id)
                 if button_widget:
                     button_widget.sound_data = sound_data # Update button's internal data ref
+                    button_widget.setText(new_sound_name) # Update the text directly to be safe
                     button_widget.set_file_missing(False) # Update visual state
 
                 # BATCH RELINKING LOGIC
                 new_dir = os.path.dirname(abs_path)
                 batch_relinked_count = 0
-                for other_sound in self.config.get('sounds', []):
-                    if other_sound.get('id') == sound_id:
-                        continue # Skip the one we just relinked
+                if was_missing:
+                    for other_sound in self.config.get('sounds', []):
+                        if other_sound.get('id') == sound_id:
+                            continue # Skip the one we just relinked
 
-                    if not other_sound.get('file_exists', True): # It's missing
-                        old_other_path = other_sound.get('absolute_path') or other_sound.get('relative_path')
-                        if old_other_path:
-                            # Extract just the filename
-                            filename = os.path.basename(old_other_path)
-                            potential_new_path = os.path.join(new_dir, filename)
+                        if not other_sound.get('file_exists', True): # It's missing
+                            old_other_path = other_sound.get('absolute_path') or other_sound.get('relative_path')
+                            if old_other_path:
+                                # Extract just the filename
+                                filename = os.path.basename(old_other_path)
+                                potential_new_path = os.path.join(new_dir, filename)
 
-                            if os.path.exists(potential_new_path):
-                                try: other_rel_path = os.path.relpath(potential_new_path, config_dir)
-                                except ValueError: other_rel_path = potential_new_path
-                                # Normalize path
-                                other_rel_path = other_rel_path.replace('\\', '/')
+                                if os.path.exists(potential_new_path):
+                                    try: other_rel_path = os.path.relpath(potential_new_path, config_dir)
+                                    except ValueError: other_rel_path = potential_new_path
+                                    # Normalize path
+                                    other_rel_path = other_rel_path.replace('\\', '/')
 
-                                other_sound["relative_path"] = other_rel_path
-                                other_sound["absolute_path"] = potential_new_path
-                                other_sound["file_exists"] = True
+                                    other_sound["relative_path"] = other_rel_path
+                                    other_sound["absolute_path"] = potential_new_path
+                                    other_sound["file_exists"] = True
 
-                                # Update UI button
-                                other_button = self.sound_buttons.get(other_sound.get('id'))
-                                if other_button:
-                                    other_button.sound_data = other_sound
-                                    other_button.set_file_missing(False)
+                                    # Update UI button
+                                    other_button = self.sound_buttons.get(other_sound.get('id'))
+                                    if other_button:
+                                        other_button.sound_data = other_sound
+                                        other_button.set_file_missing(False)
 
-                                batch_relinked_count += 1
-                                print(f"Auto-relinked: {other_sound.get('name')} to {potential_new_path}")
+                                    batch_relinked_count += 1
+                                    print(f"Auto-relinked: {other_sound.get('name')} to {potential_new_path}")
 
                 self.save_config(); # Save the updated relative path
                 if batch_relinked_count > 0:
-                    msg = f"Relinked '{name}' and auto-relinked {batch_relinked_count} other missing files in the same folder."
+                    msg = f"Changed '{name}' to '{new_sound_name}' and auto-relinked {batch_relinked_count} other missing files in the same folder."
                     self.update_status(msg)
                     QMessageBox.information(self, "Batch Relink Successful", msg)
                 else:
-                    self.update_status(f"Relinked '{name}'.")
+                    self.update_status(f"Changed '{name}' to '{new_sound_name}'.")
 
             else: # No file selected
                 self.update_status("Relink cancelled - no file selected.")
@@ -1788,13 +1795,13 @@ class SoundboardWindow(QMainWindow):
 
         action_edit = QAction("Edit Properties", self);
         action_hotkey = QAction("Assign Hotkey", self);
-        action_relink = QAction("Relink Missing File", self);
+        action_relink = QAction("Relink/Change File...", self);
         action_delete = QAction("Delete Sound", self)
 
         # Use lambda to pass parameters to the handler slot
         action_edit.triggered.connect(lambda: self.handle_context_menu_option(sound_id, "Edit Properties"));
         action_hotkey.triggered.connect(lambda: self.handle_context_menu_option(sound_id, "Assign Hotkey"));
-        action_relink.triggered.connect(lambda: self.handle_context_menu_option(sound_id, "Relink Missing File"));
+        action_relink.triggered.connect(lambda: self.handle_context_menu_option(sound_id, "Relink/Change File..."));
         action_delete.triggered.connect(lambda: self.handle_context_menu_option(sound_id, "Delete Sound"));
 
         menu.addAction(action_edit);
@@ -1803,8 +1810,6 @@ class SoundboardWindow(QMainWindow):
         if _HOTKEY_LIB_LOADED: menu.addAction(action_hotkey)
         else: action_hotkey.setEnabled(False); menu.addAction(action_hotkey)
 
-        # Only enable relink if file is currently missing
-        action_relink.setEnabled(sound_data and not sound_data.get("file_exists", True));
         menu.addAction(action_relink)
 
         menu.addSeparator(); menu.addAction(action_delete);
@@ -1823,7 +1828,7 @@ class SoundboardWindow(QMainWindow):
         elif option == "Assign Hotkey":
             if _HOTKEY_LIB_LOADED: self.open_assign_hotkey_dialog(sound_data)
             else: self.show_error_popup("Hotkey Error", "pynput library is not available.")
-        elif option == "Relink Missing File": self.relink_sound(sound_id)
+        elif option == "Relink/Change File...": self.relink_sound(sound_id)
         elif option == "Delete Sound": self.delete_sound(sound_id)
 
     @Slot(dict) # Make it a slot if called from elsewhere potentially
